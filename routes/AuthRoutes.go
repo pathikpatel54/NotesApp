@@ -160,7 +160,7 @@ func generateSession(user *models.User, c *gin.Context, ac *AuthController) {
 	}
 }
 
-func isLoggedIn(c *gin.Context, db *mongo.Database, ctx context.Context) (bool, models.User) {
+func isLoggedIn(c *gin.Context, db *mongo.Database, ctx context.Context) (bool, *models.User) {
 	var session models.Session
 	var user models.User
 
@@ -168,28 +168,28 @@ func isLoggedIn(c *gin.Context, db *mongo.Database, ctx context.Context) (bool, 
 
 	if err != nil {
 		log.Println(err.Error())
-		return false, models.User{}
+		return false, &models.User{}
 	}
 
 	err = db.Collection("sessions").FindOne(ctx, bson.D{{Key: "session-id", Value: cookie}}).Decode(&session)
 
 	if err != nil {
 		log.Println(err.Error())
-		return false, models.User{}
+		return false, &models.User{}
 	}
 
 	if session.Expires.Before(time.Now()) {
 		c.SetCookie("session", "", -1, "/", "localhost", false, true)
 		db.Collection("sessions").DeleteMany(ctx, bson.D{{Key: "email", Value: session.Email}})
-		return false, models.User{}
+		return false, &models.User{}
 	}
 
 	err = db.Collection("users").FindOne(ctx, bson.D{{Key: "email", Value: session.Email}}).Decode(&user)
 
 	if err != nil {
 		log.Println("Error retreiving User")
-		return false, models.User{}
+		return false, &models.User{}
 	}
 
-	return true, user
+	return true, &user
 }
