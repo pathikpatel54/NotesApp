@@ -1,11 +1,16 @@
 package main
 
 import (
+	"log"
 	"notes-app/database"
 	"notes-app/routes"
 
 	"github.com/gin-gonic/gin"
 )
+
+func init() {
+	log.SetFlags(log.Lshortfile | log.LstdFlags)
+}
 
 func main() {
 

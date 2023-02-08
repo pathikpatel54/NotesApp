@@ -2,7 +2,7 @@ package database
 
 import (
 	"context"
-	"fmt"
+	"log"
 	"notes-app/config"
 
 	"go.mongodb.org/mongo-driver/mongo"
@@ -22,7 +22,7 @@ func GetMongoDB() (*mongo.Database, context.Context) {
 		panic(err)
 	}
 
-	fmt.Println("MongoDB: Successfully connected and pinged.")
+	log.Println("MongoDB: Successfully connected and pinged.")
 
 	return (client.Database("db")), ctx
 }

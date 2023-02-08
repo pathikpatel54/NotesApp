@@ -109,7 +109,7 @@ func getUserInfo(state string, code string) (*models.User, error) {
 	var user models.User
 
 	if state != oauthstate {
-		fmt.Println(oauthstate)
+		log.Println(oauthstate)
 		return &models.User{}, fmt.Errorf("oauth state does not match")
 	}
 

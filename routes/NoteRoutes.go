@@ -3,7 +3,6 @@ package routes
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
 	"notes-app/models"
@@ -74,7 +73,7 @@ func newUpgrader(user *models.User, nc *NoteController) *websocket.Upgrader {
 	})
 
 	u.OnClose(func(c *websocket.Conn, err error) {
-		fmt.Println("OnClose:", c.RemoteAddr().String(), err)
+		log.Println("OnClose:", c.RemoteAddr().String(), err)
 	})
 	return u
 }
@@ -95,5 +94,5 @@ func (nc *NoteController) NoteWebsocket(c *gin.Context) {
 	wsConn := conn.(*websocket.Conn)
 	wsConn.SetReadDeadline(time.Time{})
 
-	fmt.Println("OnOpen:", wsConn.RemoteAddr().String())
+	log.Println("OnOpen:", wsConn.RemoteAddr().String())
 }
