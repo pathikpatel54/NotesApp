@@ -106,7 +106,7 @@ func newUpgrader(user *models.User, nc *NoteController) *websocket.Upgrader {
 	return u
 }
 
-func (nc *NoteController) OnWebsocket(c *gin.Context) {
+func (nc *NoteController) NoteWebsocket(c *gin.Context) {
 	logged, user := isLoggedIn(c, nc.db, nc.ctx)
 
 	if !logged {
