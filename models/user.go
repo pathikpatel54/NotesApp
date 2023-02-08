@@ -4,7 +4,7 @@ import "go.mongodb.org/mongo-driver/bson/primitive"
 
 // User struct
 type User struct {
-	ID            primitive.ObjectID `json:"_id" bson:"_id,omitempty"`
+	ID            primitive.ObjectID `json:"-" bson:"_id,omitempty"`
 	GoogleID      string             `json:"id" bson:"id"`
 	Email         string             `json:"email" bson:"email"`
 	VerifiedEmail bool               `json:"verified_email" bson:"verified_email"`
