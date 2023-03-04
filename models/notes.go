@@ -11,6 +11,5 @@ type Note struct {
 	DateCreated time.Time          `json:"date-created" bson:"date-created,omitempty"`
 	Content     string             `json:"content" bson:"content,omitempty"`
 	Author      string             `json:"author" bson:"author,omitempty"`
-	Folder      string             `json:"folder" bson:"folder,omitempty"`
 	Category    string             `json:"category" bson:"category,omitempty"`
 }

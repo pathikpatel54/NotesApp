@@ -40,7 +40,6 @@ func init() {
 	var err error
 
 	googleOauthConfig = &oauth2.Config{
-		RedirectURL:  "http://localhost:8080/auth/google/callback",
 		ClientID:     config.Keys.GoogleClientID,
 		ClientSecret: config.Keys.GoogleClientSecret,
 		Scopes:       []string{"https://www.googleapis.com/auth/userinfo.profile", "https://www.googleapis.com/auth/userinfo.email"},
@@ -55,6 +54,11 @@ func init() {
 }
 
 func (ac *AuthController) Login(c *gin.Context) {
+	scheme := "http://"
+	if c.Request.TLS != nil {
+		scheme = "https://"
+	}
+	googleOauthConfig.RedirectURL = scheme + c.Request.Host + "/auth/google/callback"
 	c.Redirect(http.StatusTemporaryRedirect, googleOauthConfig.AuthCodeURL(oauthstate))
 }
 

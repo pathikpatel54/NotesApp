@@ -26,6 +26,7 @@ func main() {
 	r.GET("/api/logout", authRoutes.Logout)
 
 	r.GET("/api/notes", noteRoutes.NotesIndex)
+	r.POST("/api/note", noteRoutes.NewNote)
 	r.GET("/api/notes/socket", noteRoutes.NoteWebsocket)
 
 	r.Run()
