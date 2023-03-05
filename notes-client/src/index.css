@@ -1,13 +1,19 @@
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+.mantine-RichTextEditor-typographyStylesProvider{
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+.mantine-AppShell-main{
+    padding-bottom: 18px;
+}
+.rte {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+.rte-content .mantine-RichTextEditor-content{
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
 }

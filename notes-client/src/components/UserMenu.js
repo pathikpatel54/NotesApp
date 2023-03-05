@@ -1,5 +1,5 @@
 import { forwardRef } from "react";
-import { IconChevronDown, IconExternalLink } from "@tabler/icons";
+import { IconChevronDown, IconExternalLink, IconLogout } from "@tabler/icons";
 import { Group, Avatar, Text, Menu, UnstyledButton } from "@mantine/core";
 
 const UserButton = forwardRef(
@@ -52,12 +52,11 @@ const UserMenu = ({ image, name, email }) => {
                     </Menu.Item>
 
                     <Menu.Item
-                        icon={<IconExternalLink size={14} />}
+                        icon={<IconLogout size={14} />}
                         component="a"
-                        href="https://mantine.dev"
-                        target="_blank"
+                        href="/api/logout"
                     >
-                        External link
+                        Logout
                     </Menu.Item>
                 </Menu.Dropdown>
             </Menu>
