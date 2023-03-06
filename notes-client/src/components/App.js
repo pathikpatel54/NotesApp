@@ -20,10 +20,10 @@ const App = () => {
 
     return (
         <>
-            
             <MantineProvider
                 theme={{
-                    colorScheme: "dark"
+                    colorScheme: "dark",
+                    defaultRadius: "xs",
                 }}
                 withGlobalStyles
                 withNormalizeCSS

@@ -10,6 +10,7 @@ import {
     Image,
     Transition,
     Autocomplete,
+    ScrollArea,
 } from "@mantine/core";
 import Head from "./Head";
 import Editor from "./Editor";
@@ -28,19 +29,26 @@ const useStyles = createStyles((theme) => ({
         marginLeft: `calc(${theme.spacing.md} * -1)`,
         marginRight: `calc(${theme.spacing.md} * -1)`,
         marginBottom: theme.spacing.md,
-    
-        '&:not(:last-of-type)': {
-          borderBottom: `${1} solid ${
-            theme.colorScheme === 'dark' ? theme.colors.dark[4] : theme.colors.gray[3]
-          }`,
+
+        "&:not(:last-of-type)": {
+            borderBottom: `${1} solid ${
+                theme.colorScheme === "dark"
+                    ? theme.colors.dark[4]
+                    : theme.colors.gray[3]
+            }`,
         },
-      },
+    },
 }));
 
 export default function AppShellDemo() {
     const theme = useMantineTheme();
     const [opened, setOpened] = useState(true);
+    const [selected, setSelected] = useState(0);
     const { classes } = useStyles();
+
+    const onSelectChange = (index) => {
+        setSelected(index);
+    };
 
     return (
         <AppShell
@@ -71,7 +79,7 @@ export default function AppShellDemo() {
                                 ...styles,
                             }}
                         >
-                            <Navbar.Section >
+                            <Navbar.Section>
                                 <Autocomplete
                                     placeholder="Search"
                                     icon={
@@ -88,8 +96,16 @@ export default function AppShellDemo() {
                                     ]}
                                 />
                             </Navbar.Section>
-                            <Navbar.Section grow mt="md" className={classes.section}>
-                                <Sidebar />
+                            <Navbar.Section
+                                grow
+                                mt="md"
+                                className={classes.section}
+                                component={ScrollArea}
+                            >
+                                <Sidebar
+                                    onSelectChange={onSelectChange}
+                                    selected={selected}
+                                />
                             </Navbar.Section>
                         </Navbar>
                     )}
@@ -114,7 +130,8 @@ export default function AppShellDemo() {
                 </Header>
             }
         >
-            <Editor />
+            
+            <Editor selected={selected}/>
         </AppShell>
     );
 }

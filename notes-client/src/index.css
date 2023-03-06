@@ -17,3 +17,6 @@
     flex-direction: column;
     flex: 1 1 auto;
 }
+body{
+    border-radius: 0px !important;
+}

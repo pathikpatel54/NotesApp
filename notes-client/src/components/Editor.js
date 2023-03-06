@@ -8,11 +8,18 @@ import Superscript from "@tiptap/extension-superscript";
 import SubScript from "@tiptap/extension-subscript";
 import Image from "@tiptap/extension-image";
 import { Textarea } from "@mantine/core";
+import { useDispatch, useSelector } from "react-redux";
+import { selectAllNotes, syncNote } from "../features/notes/notesSlice";
+import { sendMessage, socket, waitForOpenSocket } from "../middlewares/socket";
+import { useEffect, useState } from "react";
+let flag = false;
 
+const Editor = ({ selected }) => {
+    const notes = useSelector(selectAllNotes);
+    const [webSocket, setWebSocket] = useState(null);
+    const [note, setNote] = useState(notes[selected]);
+    const dispatch = useDispatch();
 
-const content = "";
-
-const Editor = () => {
     const editor = useEditor({
         extensions: [
             StarterKit,
@@ -24,16 +31,47 @@ const Editor = () => {
             TextAlign.configure({ types: ["heading", "paragraph"] }),
             Image,
         ],
-        content,
+        content: note?.content,
+        onUpdate({ editor }) {
+            setNote((prevState) => ({
+                ...prevState,
+                content: editor.getHTML(),
+            }));
+        },
     });
+
+    useEffect(() => {
+        if (flag === false && editor != null) {
+            const content = notes[selected]?.content;
+            editor?.commands?.setContent(content);
+            setNote(notes[selected]);
+            flag = true;
+        }
+        setNote(notes[selected]);
+    }, [notes]);
+
+    useEffect(() => {
+        dispatch(syncNote({ selected, content: note }));
+        const message = {
+            type: "modify",
+            new: note,
+        };
+        sendMessage(webSocket, JSON.stringify(message));
+    }, [note?.content, note?.title]);
+
+    useEffect(() => {
+        setWebSocket(socket());
+    }, []);
+
+    useEffect(() => {
+        const content = notes[selected]?.content;
+        editor?.commands?.setContent(content);
+        setNote(notes[selected]);
+    }, [selected, editor]);
 
     return (
         <>
-            <RichTextEditor
-                editor={editor}
-                mr={"md"}
-                className="rte"
-            >
+            <RichTextEditor editor={editor} mr={"md"} className="rte">
                 <RichTextEditor.Toolbar>
                     <Textarea
                         placeholder="Untitled Note"
@@ -42,6 +80,13 @@ const Editor = () => {
                         size={"lg"}
                         maxRows={1}
                         mah={"48px"}
+                        value={note ? note.title : ""}
+                        onChange={(event) => {
+                            setNote((prev) => ({
+                                ...prev,
+                                title: event.target.value,
+                            }));
+                        }}
                     />
                 </RichTextEditor.Toolbar>
                 <RichTextEditor.Toolbar sticky stickyOffset={60}>

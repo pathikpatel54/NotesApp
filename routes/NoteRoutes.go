@@ -3,7 +3,6 @@ package routes
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
 	"notes-app/models"
@@ -70,10 +69,20 @@ func (nc *NoteController) NewNote(c *gin.Context) {
 	note := new(models.Note)
 	c.BindJSON(&note)
 	note.Author = user.GoogleID
-	fmt.Println(note)
-	result, _ := nc.db.Collection("notes").InsertOne(nc.ctx, note)
 
-	fmt.Println(result)
+	result, err := nc.db.Collection("notes").InsertOne(nc.ctx, note)
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, "")
+		return
+	}
+
+	inserted := nc.db.Collection("notes").FindOne(nc.ctx, bson.D{{Key: "_id", Value: result.InsertedID}})
+
+	var insertedNote models.Note
+
+	inserted.Decode(&insertedNote)
+	c.JSON(http.StatusOK, insertedNote)
 }
 
 func newUpgrader(user *models.User, nc *NoteController) *websocket.Upgrader {
@@ -84,9 +93,19 @@ func newUpgrader(user *models.User, nc *NoteController) *websocket.Upgrader {
 
 		json.Unmarshal(data, &message)
 
-		result, _ := nc.db.Collection("notes").UpdateOne(nc.ctx, bson.D{{Key: "_id", Value: message.Note.ID}, {Key: "author", Value: user.GoogleID}}, bson.D{{Key: "$set", Value: message.Note}})
+		if message.Type == "ping" {
+			c.WriteMessage(messageType, []byte(`{"type": "pong"}`))
+		} else if message.Type == "modify" {
+			_, err := nc.db.Collection("notes").UpdateOne(nc.ctx, bson.D{{Key: "_id", Value: message.Note.ID}, {Key: "author", Value: user.GoogleID}}, bson.D{{Key: "$set", Value: message.Note}})
 
-		c.WriteMessage(messageType, []byte(strconv.Itoa(int(result.ModifiedCount))))
+			if err != nil {
+				c.WriteMessage(messageType, []byte(strconv.Itoa(http.StatusInternalServerError)))
+			} else {
+				c.WriteMessage(messageType, []byte("Modified"))
+			}
+		} else if message.Type == "create" {
+			c.WriteMessage(messageType, []byte("Created"))
+		}
 	})
 
 	u.OnClose(func(c *websocket.Conn, err error) {
@@ -104,6 +123,9 @@ func (nc *NoteController) NoteWebsocket(c *gin.Context) {
 	}
 
 	upgrader := newUpgrader(user, nc)
+	upgrader.CheckOrigin = func(r *http.Request) bool {
+		return true
+	}
 	conn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
 	if err != nil {
 		panic(err)

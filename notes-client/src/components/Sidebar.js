@@ -1,82 +1,57 @@
 import {
     ActionIcon,
-    Autocomplete,
+    Box,
     createStyles,
     Divider,
-    getStylesRef,
     Group,
-    Navbar,
     Text,
     Tooltip,
 } from "@mantine/core";
-import {
-    Icon2fa,
-    IconBellRinging,
-    IconDatabaseImport,
-    IconFingerprint,
-    IconKey,
-    IconPlus,
-    IconReceipt2,
-    IconSearch,
-    IconSettings,
-} from "@tabler/icons";
-import { useState } from "react";
-import { useSelector } from "react-redux";
-import { selectAllNotes } from "../features/notes/notesSlice";
+import { IconPlus } from "@tabler/icons";
+import { useDispatch, useSelector } from "react-redux";
+import { addNote, selectAllNotes } from "../features/notes/notesSlice";
 
 const useStyles = createStyles((theme) => ({
     link: {
         ...theme.fn.focusStyles(),
-        display: "flex",
-        alignItems: "center",
+        display: "block",
         textDecoration: "none",
-        fontSize: theme.fontSizes.sm,
         color:
+            theme.colorScheme === "dark" ? theme.colors.dark[0] : theme.black,
+        lineHeight: 1.2,
+        fontSize: theme.fontSizes.sm,
+        padding: theme.spacing.md,
+        borderTopRightRadius: 0,
+        borderBottomRightRadius: 0,
+        borderLeft: `${"2px"} solid ${
             theme.colorScheme === "dark"
-                ? theme.colors.dark[1]
-                : theme.colors.gray[7],
-        padding: `${theme.spacing.xs} ${theme.spacing.sm}`,
-        borderRadius: theme.radius.sm,
-        fontWeight: 500,
+                ? theme.colors.dark[4]
+                : theme.colors.gray[3]
+        }`,
 
         "&:hover": {
             backgroundColor:
                 theme.colorScheme === "dark"
                     ? theme.colors.dark[6]
                     : theme.colors.gray[0],
-            color: theme.colorScheme === "dark" ? theme.white : theme.black,
-
-            [`& .${getStylesRef("icon")}`]: {
-                color: theme.colorScheme === "dark" ? theme.white : theme.black,
-            },
         },
     },
 
-    linkIcon: {
-        ref: getStylesRef("icon"),
-        color:
-            theme.colorScheme === "dark"
-                ? theme.colors.dark[2]
-                : theme.colors.gray[6],
-        marginRight: theme.spacing.sm,
-    },
-
     linkActive: {
+        fontWeight: 500,
+        borderLeftColor:
+            theme.colors[theme.primaryColor][
+                theme.colorScheme === "dark" ? 6 : 7
+            ],
+        color: theme.colors[theme.primaryColor][
+            theme.colorScheme === "dark" ? 2 : 7
+        ],
+
         "&, &:hover": {
-            backgroundColor: theme.fn.variant({
-                variant: "light",
-                color: theme.primaryColor,
-            }).background,
-            color: theme.fn.variant({
-                variant: "light",
-                color: theme.primaryColor,
-            }).color,
-            [`& .${getStylesRef("icon")}`]: {
-                color: theme.fn.variant({
-                    variant: "light",
-                    color: theme.primaryColor,
-                }).color,
-            },
+            backgroundColor:
+                theme.colorScheme === "dark"
+                    ? theme.fn.rgba(theme.colors[theme.primaryColor][9], 0.25)
+                    : theme.colors[theme.primaryColor][0],
         },
     },
 
@@ -87,35 +62,39 @@ const useStyles = createStyles((theme) => ({
     },
 }));
 
-const data = [
-    { link: "", label: "Notifications", icon: IconBellRinging },
-    { link: "", label: "Billing", icon: IconReceipt2 },
-    { link: "", label: "Security", icon: IconFingerprint },
-    { link: "", label: "SSH Keys", icon: IconKey },
-    { link: "", label: "Databases", icon: IconDatabaseImport },
-    { link: "", label: "Authentication", icon: Icon2fa },
-    { link: "", label: "Other Settings", icon: IconSettings },
-];
-
-const Sidebar = () => {
+const Sidebar = ({ onSelectChange, selected }) => {
     const { classes, cx } = useStyles();
-    const [active, setActive] = useState(0);
     const notes = useSelector(selectAllNotes);
+    const dispatch = useDispatch();
+
+    const onCreateNew = () => {
+        onSelectChange(notes.length);
+        const newNote = {
+            content: "",
+            title: "",
+            datecreated: new Date().toISOString(),
+        };
+        dispatch(addNote(newNote));
+    };
 
     const links = notes.map((note, index) => (
-        <a
-            className={cx(classes.link, {
-                [classes.linkActive]: index === active,
-            })}
-            href="#"
-            key={note.id}
+        <Box
+            component="a"
+            href={"#"}
             onClick={(event) => {
                 event.preventDefault();
-                setActive(index);
+                onSelectChange(index);
             }}
+            key={note?.id}
+            className={cx(classes.link, {
+                [classes.linkActive]: selected === index,
+            })}
+            sx={(theme) => ({
+                paddingLeft: theme.spacing.md,
+            })}
         >
-            <span>{note.title=="" ? "Untitled Note": note.title}</span>
-        </a>
+            {note?.title === "" ? "Untitled Note" : note?.title}
+        </Box>
     ));
 
     return (
@@ -125,8 +104,17 @@ const Sidebar = () => {
                     Notes
                 </Text>
 
-                <Tooltip label="Create new note" withArrow position="right">
-                    <ActionIcon variant="default" size={23}>
+                <Tooltip
+                    label="Create new note"
+                    withArrow
+                    position="right"
+                    variant="subtle"
+                >
+                    <ActionIcon
+                        variant="default"
+                        size={23}
+                        onClick={onCreateNew}
+                    >
                         <IconPlus size="0.8rem" stroke={1.5} />
                     </ActionIcon>
                 </Tooltip>
