@@ -15,8 +15,8 @@ export const socket = () => {
 
 export const waitForOpenSocket = (socket) => {
     return new Promise((resolve) => {
-        if (socket.readyState !== socket.OPEN) {
-            socket.on("open", (_) => {
+        if (socket?.readyState !== socket?.OPEN) {
+            socket?.on("open", (_) => {
                 resolve();
             });
         } else {
@@ -28,5 +28,5 @@ export const waitForOpenSocket = (socket) => {
 export const sendMessage = async (socket, message) => {
     console.log(message);
     await waitForOpenSocket(socket);
-    socket.send(message);
+    socket?.send(message);
 }

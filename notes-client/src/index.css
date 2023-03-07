@@ -7,6 +7,9 @@
 .mantine-AppShell-main{
     padding-bottom: 18px;
 }
+.mantine-Textarea-input{
+    font-weight: bold;
+}
 .rte {
     display: flex;
     flex-direction: column;

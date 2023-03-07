@@ -12,6 +12,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/lesismal/nbio/nbhttp/websocket"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -32,7 +33,7 @@ func (nc *NoteController) NotesIndex(c *gin.Context) {
 		return
 	}
 
-	var notes []models.Note
+	var notes = []models.Note{}
 
 	cursor, err := nc.db.Collection("notes").Find(nc.ctx, bson.D{{Key: "author", Value: user.GoogleID}})
 
@@ -83,6 +84,33 @@ func (nc *NoteController) NewNote(c *gin.Context) {
 
 	inserted.Decode(&insertedNote)
 	c.JSON(http.StatusOK, insertedNote)
+}
+
+func (nc *NoteController) DeleteNote(c *gin.Context) {
+	logged, user := isLoggedIn(c, nc.db, nc.ctx)
+	var foundNote models.Note
+
+	if !logged {
+		c.JSON(http.StatusUnauthorized, "")
+		return
+	}
+	id, _ := primitive.ObjectIDFromHex(c.Param("id"))
+	found := nc.db.Collection("notes").FindOne(nc.ctx, bson.D{{Key: "_id", Value: id}})
+	found.Decode(&foundNote)
+	if foundNote.Author != user.GoogleID {
+		c.JSON(http.StatusUnauthorized, "")
+		return
+	}
+	deleted, err := nc.db.Collection("notes").DeleteOne(nc.ctx, bson.D{{Key: "_id", Value: foundNote.ID}})
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, "")
+		return
+	}
+	if deleted.DeletedCount > 0 {
+		c.JSON(http.StatusOK, foundNote.ID.Hex())
+		return
+	}
+	c.JSON(http.StatusNotFound, "")
 }
 
 func newUpgrader(user *models.User, nc *NoteController) *websocket.Upgrader {

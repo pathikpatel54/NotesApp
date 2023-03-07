@@ -5,7 +5,6 @@ const initialState = {
     notes: [],
     status: "idle",
     error: "",
-    encrypted: true,
     synced: true,
     key: "",
 };
@@ -20,6 +19,11 @@ export const addNote = createAsyncThunk("notes/addNote", async (request) => {
     return response.data;
 });
 
+export const deleteNote = createAsyncThunk("notes/deleteNote", async (id) => {
+    const response = await axios.delete(`/api/note/${id}`);
+    return response.data;
+});
+
 const updateNote = (state, action) => {
     const { selected, content } = action.payload;
     if (state.notes[selected] != null) {
@@ -27,11 +31,17 @@ const updateNote = (state, action) => {
     }
 };
 
+const setKey = (state, action) => {
+    const password = action.payload;
+    state.key = password;
+};
+
 const notesSlice = createSlice({
     name: "notes",
     initialState,
     reducers: {
         updateNote,
+        setKey
     },
     extraReducers(builder) {
         builder
@@ -57,10 +67,22 @@ const notesSlice = createSlice({
                 state.status = "rejected";
                 state.error = action.error.message;
             })
+            .addCase(deleteNote.pending, (state) => {
+                state.status = "pending"
+            })
+            .addCase(deleteNote.fulfilled, (state, action) => {
+                state.status = "fulfilled";
+                state.notes = state.notes.filter((note) => note.id !== action.payload);
+            })  
+            .addCase(deleteNote.rejected, (state, action) => {
+                state.status = "rejected";
+                state.error = action.error.message;
+            })
     },
 });
 
 export const selectAllNotes = (state) => state.notes.notes;
+export const getNotesKey = (state) => state.notes.key;
 export const getNotesStatus = (state) => state.notes.status;
 export const getNotesError = (state) => state.notes.error;
 export const syncNote = notesSlice.actions.updateNote;

@@ -27,6 +27,7 @@ func main() {
 
 	r.GET("/api/notes", noteRoutes.NotesIndex)
 	r.POST("/api/note", noteRoutes.NewNote)
+	r.DELETE("/api/note/:id", noteRoutes.DeleteNote)
 	r.GET("/api/notes/socket", noteRoutes.NoteWebsocket)
 
 	r.Run()

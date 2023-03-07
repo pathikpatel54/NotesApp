@@ -7,9 +7,13 @@ import {
     Text,
     Tooltip,
 } from "@mantine/core";
-import { IconPlus } from "@tabler/icons";
+import { IconDatabase, IconPlus, IconTrash } from "@tabler/icons";
 import { useDispatch, useSelector } from "react-redux";
-import { addNote, selectAllNotes } from "../features/notes/notesSlice";
+import {
+    addNote,
+    deleteNote,
+    selectAllNotes,
+} from "../features/notes/notesSlice";
 
 const useStyles = createStyles((theme) => ({
     link: {
@@ -67,7 +71,7 @@ const Sidebar = ({ onSelectChange, selected }) => {
     const notes = useSelector(selectAllNotes);
     const dispatch = useDispatch();
 
-    const onCreateNew = () => {
+    const onCreateNew = (e) => {
         onSelectChange(notes.length);
         const newNote = {
             content: "",
@@ -77,7 +81,13 @@ const Sidebar = ({ onSelectChange, selected }) => {
         dispatch(addNote(newNote));
     };
 
-    const links = notes.map((note, index) => (
+    const onDeleteClick = (e, id) => {
+        onSelectChange(0);
+        e.stopPropagation();
+        dispatch(deleteNote(id));
+    };
+
+    const links = notes?.map((note, index) => (
         <Box
             component="a"
             href={"#"}
@@ -91,9 +101,21 @@ const Sidebar = ({ onSelectChange, selected }) => {
             })}
             sx={(theme) => ({
                 paddingLeft: theme.spacing.md,
+                display: "flex",
+                justifyContent: "space-between",
             })}
         >
             {note?.title === "" ? "Untitled Note" : note?.title}
+            {/* <IconDatabase size="1rem" /> */}
+            <Tooltip label="Delete Note" withArrow position="right">
+                <ActionIcon
+                    variant="default"
+                    size={18}
+                    onClick={(e) => onDeleteClick(e, note?.id)}
+                >
+                    <IconTrash size="0.8rem" stroke={1.5} />
+                </ActionIcon>
+            </Tooltip>
         </Box>
     ));
 

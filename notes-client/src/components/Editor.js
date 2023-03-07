@@ -41,14 +41,16 @@ const Editor = ({ selected }) => {
     });
 
     useEffect(() => {
+        setNote(notes[selected]);
         if (flag === false && editor != null) {
             const content = notes[selected]?.content;
             editor?.commands?.setContent(content);
-            setNote(notes[selected]);
             flag = true;
         }
-        setNote(notes[selected]);
-    }, [notes]);
+        if (editor?.getHTML() != note?.content) {
+            editor?.commands?.setContent(note?.content);
+        }
+    }, [notes, note]);
 
     useEffect(() => {
         dispatch(syncNote({ selected, content: note }));
@@ -71,66 +73,72 @@ const Editor = ({ selected }) => {
 
     return (
         <>
-            <RichTextEditor editor={editor} mr={"md"} className="rte">
-                <RichTextEditor.Toolbar>
-                    <Textarea
-                        placeholder="Untitled Note"
-                        variant={"unstyled"}
-                        w={"100%"}
-                        size={"lg"}
-                        maxRows={1}
-                        mah={"48px"}
-                        value={note ? note.title : ""}
-                        onChange={(event) => {
-                            setNote((prev) => ({
-                                ...prev,
-                                title: event.target.value,
-                            }));
-                        }}
-                    />
-                </RichTextEditor.Toolbar>
-                <RichTextEditor.Toolbar sticky stickyOffset={60}>
-                    <RichTextEditor.ControlsGroup>
-                        <RichTextEditor.Bold />
-                        <RichTextEditor.Italic />
-                        <RichTextEditor.Underline />
-                        <RichTextEditor.Strikethrough />
-                        <RichTextEditor.ClearFormatting />
-                        <RichTextEditor.Highlight />
-                        <RichTextEditor.Code />
-                    </RichTextEditor.ControlsGroup>
+            {notes.length === 0 ? (
+                <></>
+            ) : (
+                <RichTextEditor editor={editor} mr={"md"} className="rte">
+                    <RichTextEditor.Toolbar>
+                        <Textarea
+                            placeholder="Untitled Note"
+                            variant={"unstyled"}
+                            w={"100%"}
+                            size={"xl"}
+                            maxRows={1}
+                            mah={"50px"}
+                            value={note ? note.title : ""}
+                            onChange={(event) => {
+                                setNote((prev) => ({
+                                    ...prev,
+                                    title: event.target.value,
+                                }));
+                            }}
+                        />
+                    </RichTextEditor.Toolbar>
+                    <RichTextEditor.Toolbar sticky stickyOffset={60}>
+                    
+                        <RichTextEditor.ControlsGroup>
+                            <RichTextEditor.Bold />
+                            <RichTextEditor.Italic />
+                            <RichTextEditor.Underline />
+                            <RichTextEditor.Strikethrough />
+                            <RichTextEditor.ClearFormatting />
+                            <RichTextEditor.Highlight />
+                            <RichTextEditor.Code />
+                        </RichTextEditor.ControlsGroup>
 
-                    <RichTextEditor.ControlsGroup>
-                        <RichTextEditor.H1 />
-                        <RichTextEditor.H2 />
-                        <RichTextEditor.H3 />
-                        <RichTextEditor.H4 />
-                    </RichTextEditor.ControlsGroup>
+                        <RichTextEditor.ControlsGroup>
+                            <RichTextEditor.H1 />
+                            <RichTextEditor.H2 />
+                            <RichTextEditor.H3 />
+                            <RichTextEditor.H4 />
+                        </RichTextEditor.ControlsGroup>
 
-                    <RichTextEditor.ControlsGroup>
-                        <RichTextEditor.Blockquote />
-                        <RichTextEditor.Hr />
-                        <RichTextEditor.BulletList />
-                        <RichTextEditor.OrderedList />
-                        <RichTextEditor.Subscript />
-                        <RichTextEditor.Superscript />
-                    </RichTextEditor.ControlsGroup>
+                        <RichTextEditor.ControlsGroup>
+                            <RichTextEditor.CodeBlock />
+                            <RichTextEditor.Blockquote />
+                            <RichTextEditor.Hr />
+                            <RichTextEditor.BulletList />
+                            <RichTextEditor.OrderedList />
+                            <RichTextEditor.Subscript />
+                            <RichTextEditor.Superscript />
+                        </RichTextEditor.ControlsGroup>
 
-                    <RichTextEditor.ControlsGroup>
-                        <RichTextEditor.Link />
-                        <RichTextEditor.Unlink />
-                    </RichTextEditor.ControlsGroup>
+                        <RichTextEditor.ControlsGroup>
+                            <RichTextEditor.Link />
+                            <RichTextEditor.Unlink />
+                        </RichTextEditor.ControlsGroup>
 
-                    <RichTextEditor.ControlsGroup>
-                        <RichTextEditor.AlignLeft />
-                        <RichTextEditor.AlignCenter />
-                        <RichTextEditor.AlignJustify />
-                        <RichTextEditor.AlignRight />
-                    </RichTextEditor.ControlsGroup>
-                </RichTextEditor.Toolbar>
+                        <RichTextEditor.ControlsGroup>
+                            <RichTextEditor.AlignLeft />
+                            <RichTextEditor.AlignCenter />
+                            <RichTextEditor.AlignJustify />
+                            <RichTextEditor.AlignRight />
+                        </RichTextEditor.ControlsGroup>
+                    </RichTextEditor.Toolbar>
 
-                <RichTextEditor.Content className="rte-content" />
-            </RichTextEditor>
+                    <RichTextEditor.Content className="rte-content" />
+                </RichTextEditor>
+            )}
         </>
     );
 };
