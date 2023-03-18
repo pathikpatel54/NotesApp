@@ -17,6 +17,8 @@ import Editor from "./Editor";
 
 import Sidebar from "./Sidebar";
 import { IconSearch } from "@tabler/icons";
+import { getNotesDecrypted } from "../features/notes/notesSlice";
+import { useSelector } from "react-redux";
 
 const useStyles = createStyles((theme) => ({
     inner: {
@@ -45,6 +47,7 @@ export default function AppShellDemo() {
     const [opened, setOpened] = useState(true);
     const [selected, setSelected] = useState(0);
     const { classes } = useStyles();
+    const decrypted = useSelector(getNotesDecrypted);
 
     const onSelectChange = (index) => {
         setSelected(index);
@@ -130,8 +133,7 @@ export default function AppShellDemo() {
                 </Header>
             }
         >
-            
-            <Editor selected={selected}/>
+            {decrypted ? <Editor selected={selected} /> : <></>}
         </AppShell>
     );
 }

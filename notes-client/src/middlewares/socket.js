@@ -1,3 +1,5 @@
+import { encryptData } from "./crypto";
+
 export const socket = () => {
     const ws = new WebSocket("ws://localhost:3000/api/notes/socket");
 
@@ -25,8 +27,15 @@ export const waitForOpenSocket = (socket) => {
     });
 };
 
-export const sendMessage = async (socket, message) => {
-    console.log(message);
+export const sendMessage = async (socket, message, password) => {
     await waitForOpenSocket(socket);
-    socket?.send(message);
-}
+    const encryptedMessage = {
+        ...message,
+        new: {
+            ...message.new,
+            title: await encryptData(message?.new?.title, password),
+            content: await encryptData(message?.new?.content, password),
+        },
+    };
+    socket?.send(JSON.stringify(encryptedMessage));
+};

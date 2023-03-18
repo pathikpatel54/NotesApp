@@ -61,7 +61,7 @@ export async function encryptData(secretData, password) {
         return base64Buff;
     } catch (e) {
         console.log(`Error - ${e}`);
-        return "";
+        return "Error";
     }
 }
 
@@ -84,6 +84,6 @@ export async function decryptData(encryptedData, password) {
         return dec.decode(decryptedContent);
     } catch (e) {
         console.log(`Error - ${e}`);
-        return "";
+        return "Error";
     }
 }

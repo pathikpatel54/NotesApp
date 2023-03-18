@@ -1,40 +1,52 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
     selectAllNotes,
     fetchNotes,
     getNotesKey,
+    setDecryptionKey,
+    getNotesDecrypted,
 } from "../features/notes/notesSlice";
 import { fetchAuth, selectAllAuth } from "../features/auth/authSlice";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import {
-    ActionIcon,
     Button,
     MantineProvider,
     Modal,
     TextInput,
-    Tooltip,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import Home from "./Home";
 import {
-    IconLockAccess,
-    IconLockAccessOff,
-    IconLockOff,
     IconLockOpen,
 } from "@tabler/icons";
 
 const App = () => {
     const dispatch = useDispatch();
     const notes = useSelector(selectAllNotes);
-    const auth = useSelector(selectAllAuth);
     const key = useSelector(getNotesKey);
-    const [opened, { open, close }] = useDisclosure(true);
+    const [opened, { open, close }] = useDisclosure(false);
+    const decrypted = useSelector(getNotesDecrypted);
 
     useEffect(() => {
-        dispatch(fetchNotes());
+        dispatch(fetchNotes(key));
         dispatch(fetchAuth());
+        if (key === "") {
+            open();
+        }
     }, []);
+
+    useEffect(() => {
+        if (decrypted === false) {
+            open();
+        }
+    }, [key]);
+
+    const onPasswordSubmit = (e) => {
+        e.preventDefault();
+        dispatch(fetchNotes(key));
+        close();
+    };
 
     return (
         <>
@@ -52,15 +64,21 @@ const App = () => {
                         title="Enter your password"
                         size={"sm"}
                         withCloseButton={false}
+                        centered
                     >
                         <TextInput
                             placeholder="Password"
-                            onChange={() => console.log("Submitted")}
+                            value={key}
+                            onChange={(e) =>
+                                dispatch(setDecryptionKey(e.target.value))
+                            }
                         />
                         <Button
                             fullWidth
                             mt={"md"}
                             leftIcon={<IconLockOpen size="1rem" />}
+                            onClick={onPasswordSubmit}
+                            type="submit"
                         >
                             Unlock Notes
                         </Button>

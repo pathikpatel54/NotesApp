@@ -12,6 +12,8 @@ import { useDispatch, useSelector } from "react-redux";
 import {
     addNote,
     deleteNote,
+    getNotesDecrypted,
+    getNotesKey,
     selectAllNotes,
 } from "../features/notes/notesSlice";
 
@@ -70,6 +72,8 @@ const Sidebar = ({ onSelectChange, selected }) => {
     const { classes, cx } = useStyles();
     const notes = useSelector(selectAllNotes);
     const dispatch = useDispatch();
+    const key = useSelector(getNotesKey);
+    const decrypted = useSelector(getNotesDecrypted);
 
     const onCreateNew = (e) => {
         onSelectChange(notes.length);
@@ -78,7 +82,7 @@ const Sidebar = ({ onSelectChange, selected }) => {
             title: "",
             datecreated: new Date().toISOString(),
         };
-        dispatch(addNote(newNote));
+        dispatch(addNote(newNote, key));
     };
 
     const onDeleteClick = (e, id) => {
@@ -142,7 +146,7 @@ const Sidebar = ({ onSelectChange, selected }) => {
                 </Tooltip>
             </Group>
             <Divider my="xs" variant="solid" />
-            <div className={classes.collections}>{links}</div>
+            <div className={classes.collections}>{decrypted ? links : ""}</div>
         </>
     );
 };
