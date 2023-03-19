@@ -123,10 +123,9 @@ export default function AppShellDemo() {
                                 onClick={() => setOpened((o) => !o)}
                                 size="sm"
                                 color={theme.colors.gray[6]}
-                                mr="md"
                             />
 
-                            <Image src="logo.svg" maw={110} />
+                            <Image src="logo.png" maw={200} />
                         </Group>
                         <Head />
                     </div>

@@ -97,6 +97,7 @@ const Editor = ({ selected }) => {
                                     title: event.target.value,
                                 }));
                             }}
+                            
                         />
                     </RichTextEditor.Toolbar>
                     <RichTextEditor.Toolbar sticky stickyOffset={60}>
