@@ -1,4 +1,6 @@
 # NotesApp
+<img width="1512" alt="image" src="https://user-images.githubusercontent.com/36487705/231494097-ecece3a3-f9d6-4548-8d8c-375faef15570.png">
+
 <img width="1512" alt="image" src="https://user-images.githubusercontent.com/36487705/231492977-0a9b8104-3e14-43b9-9b34-187b22f5c2b3.png">
 This is a simple web app for creating and storing encrypted notes, built using React, Golang, and MongoDB. All notes are encrypted end-to-end, meaning that only the user can access their own notes, and even the server administrators cannot read them.
 
