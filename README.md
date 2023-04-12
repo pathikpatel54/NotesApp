@@ -19,7 +19,7 @@ This is a simple web app for creating and storing encrypted notes, built using R
 To run this app on your local machine, you will need to have Docker installed. Once Docker is installed, follow these steps:
 
 1. Clone this repository: `git clone https://github.com/pathikpatel54/NotesApp.git`
-2. Navigate to the project directory: `cd encrypted-notes-app`
+2. Navigate to the project directory: `cd NotesApp`
 4. Open your web browser and go to `http://localhost:3000`
 
 You should now see the login page for the app. You can create a new account and start creating encrypted notes.
