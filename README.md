@@ -13,7 +13,6 @@ This is a simple web app for creating and storing encrypted notes, built using R
 - Secure login with authentication and session management
 - Responsive and intuitive user interface built using React
 - Backend API built using Golang and MongoDB
-- Dockerized deployment for easy setup and portability
 
 ## Getting Started
 
@@ -21,7 +20,6 @@ To run this app on your local machine, you will need to have Docker installed. O
 
 1. Clone this repository: `git clone https://github.com/yourusername/encrypted-notes-app.git`
 2. Navigate to the project directory: `cd encrypted-notes-app`
-3. Start the Docker containers: `docker-compose up -d`
 4. Open your web browser and go to `http://localhost:3000`
 
 You should now see the login page for the app. You can create a new account and start creating encrypted notes.
